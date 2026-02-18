@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
-import mb.demo.applications.petstore.analyzer.webapi.model.HasAvailableResponse;
+import mb.demo.applications.ai.agents.webapi.model.HasAvailableResponse;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.boot.test.web.client.TestRestTemplate;

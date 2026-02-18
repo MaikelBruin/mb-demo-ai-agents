@@ -1,6 +1,6 @@
 package mb.demo.applications.ai.agents.service;
 
-import mb.demo.applications.petstore.analyzer.webapi.model.HasAvailableResponse;
+import mb.demo.applications.ai.agents.webapi.model.HasAvailableResponse;
 
 public interface HasAvailableService {
     HasAvailableResponse getHasAvailableRats();

@@ -1,12 +1,13 @@
 package mb.demo.applications.ai.agents.controllers;
 
 import mb.demo.applications.ai.agents.routes.RouteBuilderConstants;
+import mb.demo.applications.ai.agents.webapi.api.AvailableApi;
+import mb.demo.applications.ai.agents.webapi.model.HasAvailableResponse;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import mb.demo.applications.ai.agents.webapi.*;
 
 @RestController
 public class HasAvailableRestController extends BaseRestController implements AvailableApi {

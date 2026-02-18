@@ -19,8 +19,8 @@
         <cucumber.version>7.18.0</cucumber.version>
         <junit-platform.version>1.12.2</junit-platform.version>
         <camel.version>4.10.2</camel.version>
-        <api.defininiton.input.file>${project.parent.basedir}/api/definition/ai-agents-api.yaml
-        </api.defininiton.input.file>
+        <api.definition.input.file>${project.parent.basedir}/api/definition/ai-agents-api.yaml
+        </api.definition.input.file>
         <api.package.api>mb.demo.applications.ai.agents.webapi.api</api.package.api>
         <api.package.model>mb.demo.applications.ai.agents.webapi.model</api.package.model>
         <api.package.invoker>mb.demo.applications.ai.agents.webapi.client</api.package.invoker>
@@ -245,8 +245,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
-                            <inputSpec>${api.defininiton.input.file}</inputSpec>
+                            <skipIfSpecIsUnchanged>false</skipIfSpecIsUnchanged>
+                            <inputSpec>${api.definition.input.file}</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <apiPackage>${api.package.api}</apiPackage>
