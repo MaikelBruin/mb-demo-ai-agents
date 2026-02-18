@@ -7,31 +7,38 @@ servers:
   - url: 'https://localhost:8080'
     description: 'local'
 paths:
-  /api/available/rats:
-    get:
-      tags:
-        - available
-      operationId: getHasAvailableRats
-      summary: Returns a response including a boolean property if there are any available rats
+  /api/test/public/openapi:
+    post:
+      summary: Upload an OpenAPI spec to start testing
+      operationId: testPublicSpec
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The OpenAPI YAML or JSON file to be tested.
       responses:
-        200:
-          description: Ok
+        '200':
+          description: Testing started successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HasAvailableResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestResult'
 components:
   schemas:
-    HasAvailableResponse:
-      title: HasAvailableResponse
+    TestResult:
       type: object
       properties:
-        hasAvailable:
-          type: boolean
-          description: True if there are available pets.
-          example: true
-
-
-
-
-
+        url:
+          type: string
+        status:
+          type: integer
+        message:
+          type: string

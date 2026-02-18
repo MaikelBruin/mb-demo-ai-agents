@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
-import mb.demo.applications.ai.agents.webapi.model.HasAvailableResponse;
+import mb.demo.applications.ai.agents.webapi.model.TestResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -21,14 +21,14 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
 
     @When("I call the only endpoint of this service")
     public void iCallTheOnlyEndpointOfThisService() {
-        String fullUri = "/api/available/rats";
-        HasAvailableResponse response = testRestTemplate.getForObject(fullUri, HasAvailableResponse.class);
-        testDataHolder.setHasAvailableResponse(response);
+        String fullUri = "/api/test/public/openapi";
+        TestResult response = testRestTemplate.getForObject(fullUri, TestResult.class);
+        testDataHolder.setTestResult(response);
     }
 
     @Then("the response should not be null")
     public void theResponseShouldNotBeNull() {
-        assertThat(testDataHolder.getHasAvailableResponse()).isNotNull();
+        assertThat(testDataHolder.getTestResult()).isNotNull();
     }
 
 }
