@@ -19,16 +19,15 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         super(camelContext, producerTemplate, testDataHolder, objectMapper, testRestTemplate);
     }
 
-    @When("I get if there are any rats available")
-    public void iGetIfThereAreAnyRatsAvailable() {
-        log.info("checking if there are any rats available...");
+    @When("I call the only endpoint of this service")
+    public void iCallTheOnlyEndpointOfThisService() {
         String fullUri = "/api/available/rats";
         HasAvailableResponse response = testRestTemplate.getForObject(fullUri, HasAvailableResponse.class);
         testDataHolder.setHasAvailableResponse(response);
     }
 
-    @Then("the has available rats response should not be null")
-    public void theHasAvailableRatsResponseShouldNotBeNull() {
+    @Then("the response should not be null")
+    public void theResponseShouldNotBeNull() {
         assertThat(testDataHolder.getHasAvailableResponse()).isNotNull();
     }
 

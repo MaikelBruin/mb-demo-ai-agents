@@ -1,5 +1,5 @@
-Feature: Petstore analyzer integrated tests
+Feature: Ai Agents integrated tests
 
-  Scenario: Get has available rats should not throw exception
-    When I get if there are any rats available
-    Then the has available rats response should not be null
+  Scenario: Single endpoint should return something
+    When I call the only endpoint of this service
+    Then the response should not be null
