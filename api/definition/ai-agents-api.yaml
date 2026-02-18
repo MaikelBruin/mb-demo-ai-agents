@@ -1,0 +1,37 @@
+openapi: 3.0.1
+info:
+  title: ai agents api
+  description: 'An api to demonstrate working with ai agents'
+  version: '1.1.1'
+servers:
+  - url: 'https://localhost:8080'
+    description: 'local'
+paths:
+  /api/available/rats:
+    get:
+      tags:
+        - available
+      operationId: getHasAvailableRats
+      summary: Returns a response including a boolean property if there are any available rats
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HasAvailableResponse'
+components:
+  schemas:
+    HasAvailableResponse:
+      title: HasAvailableResponse
+      type: object
+      properties:
+        hasAvailable:
+          type: boolean
+          description: True if there are available pets.
+          example: true
+
+
+
+
+

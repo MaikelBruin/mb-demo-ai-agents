@@ -1,0 +1,15 @@
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\agents\HelloTimeAgent.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\AiAgentsApplication.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\cli\AgentCliRunner.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\config\ObjectMapperConfiguration.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\controllers\BaseRestController.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\controllers\HasAvailableRestController.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\routes\AvailableRouteBuilder.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\routes\BaseRouteBuilder.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\routes\RouteBuilderConstants.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\service\HasAvailableService.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\service\impl\HasAvailableServiceImpl.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\src\main\java\mb\demo\applications\ai\agents\utils\JerseyRequestFilter.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\target\generated-sources\openapi\src\main\java\mb\demo\applications\ai\agents\webapi\api\ApiUtil.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\target\generated-sources\openapi\src\main\java\mb\demo\applications\ai\agents\webapi\api\AvailableApi.java
+C:\Users\MB02099\Documents\work\randstad\integration\int-repos-local\examples\mb-demo-ai-agents\backend\target\generated-sources\openapi\src\main\java\mb\demo\applications\ai\agents\webapi\model\HasAvailableResponse.java
