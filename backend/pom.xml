@@ -184,7 +184,13 @@
             <version>0.5.0</version>
             <scope>compile</scope>
         </dependency>
-
+        <!-- Source: https://mvnrepository.com/artifact/com.google.adk/google-adk-spring-ai -->
+        <dependency>
+            <groupId>com.google.adk</groupId>
+            <artifactId>google-adk-spring-ai</artifactId>
+            <version>0.5.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-google-genai -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -196,6 +202,13 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-autoconfigure-model-google-genai</artifactId>
+            <version>2.0.0-M2</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-client-chat -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-client-chat</artifactId>
             <version>2.0.0-M2</version>
             <scope>compile</scope>
         </dependency>
