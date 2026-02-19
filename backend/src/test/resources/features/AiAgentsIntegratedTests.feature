@@ -1,7 +1,8 @@
-Feature: Ai Agents integrated tests
+Feature: AI Agents integrated tests
 
-  Scenario: Check service
-    Given I call the only test spec service method
+  Scenario: Test openapi spec with help of agent
+    Given I test the openapi spec "petstore.yaml" with help of my agent
+    Then there should be test results
 
 #  Scenario: Single endpoint should return something
 #    When I call the only endpoint of this service
