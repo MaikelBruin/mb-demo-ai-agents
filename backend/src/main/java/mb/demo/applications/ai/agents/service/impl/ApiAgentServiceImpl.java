@@ -21,7 +21,7 @@ public class ApiAgentServiceImpl implements ApiAgentService {
 
     public String getPayload(String operationSchema) {
         // 1. Create a unique session for this specific request
-        var session = runner.sessionService()
+        Session session = runner.sessionService()
                 .createSession("api-scanner", "user-123")
                 .blockingGet();
 

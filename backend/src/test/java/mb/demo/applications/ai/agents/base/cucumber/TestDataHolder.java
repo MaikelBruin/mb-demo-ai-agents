@@ -5,11 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Getter
 @Setter
 public class TestDataHolder {
 
-    private TestResult testResult;
+    private List<TestResult> testResults;
     private Exception exception;
 }
