@@ -4,12 +4,14 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.models.ApiCall;
-import mb.demo.applications.ai.agents.models.ApiResponse;
+import mb.demo.applications.ai.agents.models.ApiCallResponse;
 import mb.demo.applications.ai.agents.service.ApiAgentService;
 import mb.demo.applications.ai.agents.service.TestSpecService;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -27,9 +29,10 @@ public class TestSpecServiceImpl implements TestSpecService {
     private final ApiAgentService apiAgentService;
     private final RestClient restClient;
 
-    public TestSpecServiceImpl(final ApiAgentService apiAgentService, final RestClient restClient) {
+
+    public TestSpecServiceImpl(final ApiAgentService apiAgentService) {
         this.apiAgentService = apiAgentService;
-        this.restClient = restClient;
+        this.restClient = RestClient.create();
     }
 
     @Override
@@ -53,7 +56,7 @@ public class TestSpecServiceImpl implements TestSpecService {
 
                     // 4. Execute Call
                     String url = openAPI.getServers().getFirst().getUrl() + path;
-                    ApiResponse response =  executeCall(new ApiCall(url, method, payload));
+                    ApiCallResponse response =  executeCall(new ApiCall(url, method, payload));
                     return new TestResult()
                             .url(url)
                             .method(method)
@@ -65,18 +68,18 @@ public class TestSpecServiceImpl implements TestSpecService {
         ).toList();
     }
 
-    private ApiResponse executeCall(ApiCall call) {
+    private ApiCallResponse executeCall(ApiCall call) {
         try {
-            var response = restClient.method(HttpMethod.valueOf(call.method()))
+            ResponseEntity<String> response = restClient.method(HttpMethod.valueOf(call.method()))
                     .uri(call.url())
                     .body(call.payload())
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
 
-            return new ApiResponse(call.url(), response.getStatusCode().value(), response.getBody());
+            return new ApiCallResponse(call.url(), response.getStatusCode().value(), response.getBody());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            return new ApiResponse(call.url(), e.getStatusCode().value(), e.getResponseBodyAsString());
+            return new ApiCallResponse(call.url(), e.getStatusCode().value(), e.getResponseBodyAsString());
         }
     }
 
