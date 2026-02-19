@@ -1,6 +1,17 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: servlet
+  threads:
+    virtual:
+      enabled: true
   application:
     name: ai-agents
+  ai:
+    google:
+      genai:
+        api-key: ${GOOGLE_API_KEY}
+
 
 springdoc:
   show-actuator: false
@@ -10,3 +21,4 @@ springdoc:
 
   api-docs:
     path: /api-docs
+
