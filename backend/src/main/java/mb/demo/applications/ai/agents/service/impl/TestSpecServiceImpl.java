@@ -1,6 +1,7 @@
 package mb.demo.applications.ai.agents.service.impl;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.models.ApiCall;
@@ -8,7 +9,6 @@ import mb.demo.applications.ai.agents.models.ApiCallResponse;
 import mb.demo.applications.ai.agents.service.ApiAgentService;
 import mb.demo.applications.ai.agents.service.TestSpecService;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,12 +51,35 @@ public class TestSpecServiceImpl implements TestSpecService {
                     // 3. Ask Agent for a valid payload based on the operation's schema
                     String prompt = String.format("Generate one valid JSON object for %s %s. Spec: %s",
                             method, path, opEntry.getValue().getRequestBody());
-
+                    log.debug("prompting agent: '{}'", prompt);
                     String payload = apiAgentService.getPayload(prompt);
+                    log.info("retrieved payload: '{}'", payload);
 
                     // 4. Execute Call
                     String url = openAPI.getServers().getFirst().getUrl() + path;
-                    ApiCallResponse response =  executeCall(new ApiCall(url, method, payload));
+                    log.info("url: '{}'", url);
+                    List<Parameter> parameters = opEntry.getValue().getParameters();
+                    if (parameters != null) {
+                        List<Parameter> pathParams = parameters
+                                .stream()
+                                .filter(parameter -> parameter.getIn().equalsIgnoreCase("path"))
+                                .toList();
+                        if (!pathParams.isEmpty()) {
+                            for (Parameter parameter : pathParams) {
+                                String name = parameter.getName();
+                                Object exampleValue = parameter.getExample();
+                                if (exampleValue == null) {
+                                    exampleValue = parameter.getSchema().getDefault();
+                                }
+                                String paramInPath = "{" + name + "}";
+                                url = url.replace(paramInPath, exampleValue.toString());
+                            }
+                            log.info("fixed url: '{}'", url);
+                        }
+
+                    }
+
+                    ApiCallResponse response = executeCall(new ApiCall(url, method, payload));
                     return new TestResult()
                             .url(url)
                             .method(method)
