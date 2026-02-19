@@ -8,6 +8,7 @@ import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
 import mb.demo.applications.ai.agents.controllers.TestSpecRestController;
 import mb.demo.applications.ai.agents.utils.FileUtils;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.io.File;
@@ -29,9 +30,12 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
     public void iCallTheOnlyEndpointOfThisService() throws URISyntaxException {
         String fullUri = "/api/test/public/openapi";
         File input = FileUtils.getFileFromResources("input-specs/petstore.yaml");
+        restTestClient = RestTestClient.bindToServer().baseUrl("http://localhost:8082").build();
         restTestClient = RestTestClient.bindToController(testSpecRestController).build();
         TestResult response = restTestClient.post()
                 .uri(fullUri)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(input)
                 .exchange()
                 .returnResult(TestResult.class)
