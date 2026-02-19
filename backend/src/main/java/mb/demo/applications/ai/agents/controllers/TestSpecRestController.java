@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,12 @@ public class TestSpecRestController implements DefaultApi {
     @Override
     @PostMapping("/api/test/public/openapi")
     public ResponseEntity<List<TestResult>> testPublicSpec(@RequestParam("file") MultipartFile file) {
-        List<TestResult> response = testSpecService.testPublicSpec(file);
+        List<TestResult> response;
+        try {
+            response = testSpecService.testPublicSpec(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
 }

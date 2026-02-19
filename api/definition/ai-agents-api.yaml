@@ -38,7 +38,13 @@ components:
       properties:
         url:
           type: string
-        status:
+        method:
+          type: string
+        operationId:
+          type: string
+        payload:
+          type: string
+        statusCode:
           type: integer
-        message:
+        responseBody:
           type: string

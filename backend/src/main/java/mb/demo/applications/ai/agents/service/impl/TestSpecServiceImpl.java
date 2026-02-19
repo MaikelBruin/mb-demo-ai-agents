@@ -5,7 +5,6 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.models.ApiCall;
 import mb.demo.applications.ai.agents.models.ApiResponse;
-import mb.demo.applications.ai.agents.models.EndpointTask;
 import mb.demo.applications.ai.agents.service.ApiAgentService;
 import mb.demo.applications.ai.agents.service.TestSpecService;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,7 +32,9 @@ public class TestSpecServiceImpl implements TestSpecService {
         this.restClient = restClient;
     }
 
-    public List<ApiResponse> processSpec(String specContent) {
+    @Override
+    public List<TestResult> testPublicSpec(MultipartFile file) throws IOException {
+        String specContent = new String(file.getBytes(), StandardCharsets.UTF_8);
         // 1. Parse Spec
         OpenAPI openAPI = new OpenAPIV3Parser().readContents(specContent).getOpenAPI();
 
@@ -51,7 +52,15 @@ public class TestSpecServiceImpl implements TestSpecService {
                     String payload = apiAgentService.getPayload(prompt);
 
                     // 4. Execute Call
-                    return executeCall(new ApiCall(openAPI.getServers().get(0).getUrl() + path, method, payload));
+                    String url = openAPI.getServers().getFirst().getUrl() + path;
+                    ApiResponse response =  executeCall(new ApiCall(url, method, payload));
+                    return new TestResult()
+                            .url(url)
+                            .method(method)
+                            .operationId(opEntry.getValue().getOperationId())
+                            .payload(payload)
+                            .statusCode(response.status())
+                            .responseBody(response.responseBody());
                 })
         ).toList();
     }
@@ -65,67 +74,11 @@ public class TestSpecServiceImpl implements TestSpecService {
                     .retrieve()
                     .toEntity(String.class);
 
-            return new ApiResponse(call.url(), response.getStatusCode().value(), call.payload(), response.getBody());
+            return new ApiResponse(call.url(), response.getStatusCode().value(), response.getBody());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            return new ApiResponse(call.url(), e.getStatusCode().value(), call.payload(), e.getResponseBodyAsString());
+            return new ApiResponse(call.url(), e.getStatusCode().value(), e.getResponseBodyAsString());
         }
     }
 
-    public List<TestResult> testPublicSpec(MultipartFile file) {
-        try {
-            // 1. Get string content from the file and parse it
-            String specContent = new String(file.getBytes(), StandardCharsets.UTF_8);
-            List<EndpointTask> tasks = parseSpec(specContent);
-
-            // 2. Use the Agent to enrich tasks with payloads and execute via Camel
-            return tasks.parallelStream().map(task -> {
-                // Let the AI Agent "think" of a valid payload for this specific task
-                String payload = null;
-                if (!task.method().equalsIgnoreCase("GET") && !task.method().equalsIgnoreCase("DELETE")) {
-                    payload = apiAgentService.getPayload(task.operationId());
-                }
-
-                // Prepare headers for the request
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-
-                // Execute the call via Camel
-                return producerTemplate.requestBody("direct:executeApiCall",
-                        new EndpointTask(task.url(), task.method(), task.operationId(), payload, headers),
-                        TestResult.class);
-            }).toList();
-        } catch (IOException e) {
-            log.error("Error reading multipart file content", e);
-            // Return an empty list or throw a custom exception
-            return Collections.emptyList();
-        }
-    }
-
-    public List<EndpointTask> parseSpec(String specContent) {
-        OpenAPI openAPI = new OpenAPIV3Parser().readContents(specContent).getOpenAPI();
-        if (openAPI == null || openAPI.getPaths() == null) {
-            log.warn("OpenAPI spec could not be parsed or contains no paths.");
-            return Collections.emptyList();
-        }
-
-        List<EndpointTask> tasks = new ArrayList<>();
-
-        openAPI.getPaths().forEach((path, pathItem) -> {
-            // The payload and headers are initially null; they will be enriched later.
-            if (pathItem.getGet() != null && pathItem.getGet().getOperationId() != null) {
-                tasks.add(new EndpointTask(path, "GET", pathItem.getGet().getOperationId(), null, null));
-            }
-            if (pathItem.getPost() != null && pathItem.getPost().getOperationId() != null) {
-                tasks.add(new EndpointTask(path, "POST", pathItem.getPost().getOperationId(), null, null));
-            }
-            if (pathItem.getPut() != null && pathItem.getPut().getOperationId() != null) {
-                tasks.add(new EndpointTask(path, "PUT", pathItem.getPut().getOperationId(), null, null));
-            }
-            if (pathItem.getDelete() != null && pathItem.getDelete().getOperationId() != null) {
-                tasks.add(new EndpointTask(path, "DELETE", pathItem.getDelete().getOperationId(), null, null));
-            }
-        });
-        return tasks;
-    }
 
 }

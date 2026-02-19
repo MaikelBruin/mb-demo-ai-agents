@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
 import mb.demo.applications.ai.agents.utils.FileUtils;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import java.io.File;
@@ -19,8 +17,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Slf4j
 public class AiAgentsStepDefs extends BaseCucumberStepDefs {
 
-    public AiAgentsStepDefs(CamelContext camelContext, ProducerTemplate producerTemplate, TestDataHolder testDataHolder, ObjectMapper objectMapper, TestRestTemplate testRestTemplate) {
-        super(camelContext, producerTemplate, testDataHolder, objectMapper, testRestTemplate);
+    public AiAgentsStepDefs(TestDataHolder testDataHolder, ObjectMapper objectMapper, TestRestTemplate testRestTemplate) {
+        super(testDataHolder, objectMapper, testRestTemplate);
     }
 
     @When("I call the only endpoint of this service")
