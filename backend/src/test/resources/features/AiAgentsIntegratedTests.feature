@@ -1,8 +1,5 @@
 Feature: Ai Agents integrated tests
 
-  Scenario: Check context
-    Given the application has loaded
-
   Scenario: Check service
     Given I call the only test spec service method
 

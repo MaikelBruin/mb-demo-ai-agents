@@ -62,11 +62,6 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         assertThat(testDataHolder.getTestResults()).isNotNull();
     }
 
-    @Given("the application has loaded")
-    public void theApplicationHasLoaded() {
-        assertThat(testSpecRestController).isNotNull();
-    }
-
     @Given("I call the only test spec service method")
     public void iCallTheOnlyTestSpecServiceMethod() throws URISyntaxException, IOException {
         File input = FileUtils.getFileFromResources("input-specs/petstore.yaml");
