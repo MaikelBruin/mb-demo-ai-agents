@@ -1,6 +1,7 @@
 package mb.demo.applications.ai.agents.base.cucumber.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
@@ -49,4 +50,8 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         assertThat(testDataHolder.getTestResult()).isNotNull();
     }
 
+    @Given("the application has loaded")
+    public void theApplicationHasLoaded() {
+        assertThat(testSpecRestController).isNotNull();
+    }
 }
