@@ -5,10 +5,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
+import mb.demo.applications.ai.agents.utils.FileUtils;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+
+import java.io.File;
+import java.net.URISyntaxException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -20,9 +24,10 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
     }
 
     @When("I call the only endpoint of this service")
-    public void iCallTheOnlyEndpointOfThisService() {
+    public void iCallTheOnlyEndpointOfThisService() throws URISyntaxException {
         String fullUri = "/api/test/public/openapi";
-        TestResult response = testRestTemplate.getForObject(fullUri, TestResult.class);
+        File input = FileUtils.getFileFromResources("input-specs/petstore.yaml");
+        TestResult response = testRestTemplate.postForObject(fullUri, input, TestResult.class);
         testDataHolder.setTestResult(response);
     }
 

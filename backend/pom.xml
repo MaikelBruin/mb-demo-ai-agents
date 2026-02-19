@@ -15,10 +15,11 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
+        <spring-boot.version>4.0.2</spring-boot.version>
+        <spring.version>7.0.3</spring.version>
         <org.openapitools.version>7.15.0</org.openapitools.version>
         <cucumber.version>7.18.0</cucumber.version>
         <junit-platform.version>1.12.2</junit-platform.version>
-        <camel.version>4.10.2</camel.version>
         <api.definition.input.file>${project.parent.basedir}/api/definition/ai-agents-api.yaml
         </api.definition.input.file>
         <api.package.api>mb.demo.applications.ai.agents.webapi.api</api.package.api>
@@ -26,17 +27,40 @@
         <api.package.invoker>mb.demo.applications.ai.agents.webapi.client</api.package.invoker>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>2.0.0-M2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>3.4.5</version>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>3.4.5</version>
+            <version>${spring-boot.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -52,6 +76,11 @@
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser-v3</artifactId>
+            <version>2.1.38</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
         <dependency>
@@ -103,41 +132,6 @@
             <version>2.0.2</version>
         </dependency>
 
-        <!-- Apache Camel libs -->
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-spring-boot-starter</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-rest-starter</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-rest-openapi-starter</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-platform-http-starter</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-jackson-starter</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <!-- END Apache Camel libs -->
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
-            <version>${camel.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Cucumber / integration tests, upon jUnit 5. -->
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -182,35 +176,32 @@
             <groupId>com.google.adk</groupId>
             <artifactId>google-adk</artifactId>
             <version>0.5.0</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.adk</groupId>
+            <artifactId>google-adk-dev</artifactId>
+            <version>0.5.0</version>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/com.google.adk/google-adk-spring-ai -->
         <dependency>
             <groupId>com.google.adk</groupId>
             <artifactId>google-adk-spring-ai</artifactId>
             <version>0.5.0</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-google-genai -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-google-genai</artifactId>
-            <version>2.0.0-M2</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-autoconfigure-model-google-genai -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-autoconfigure-model-google-genai</artifactId>
-            <version>2.0.0-M2</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-client-chat -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-client-chat</artifactId>
-            <version>2.0.0-M2</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
