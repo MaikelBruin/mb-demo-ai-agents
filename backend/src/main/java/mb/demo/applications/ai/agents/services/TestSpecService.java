@@ -1,4 +1,4 @@
-package mb.demo.applications.ai.agents.service;
+package mb.demo.applications.ai.agents.services;
 
 import jakarta.annotation.Nullable;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;

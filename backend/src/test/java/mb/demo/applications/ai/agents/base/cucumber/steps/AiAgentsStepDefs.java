@@ -8,7 +8,7 @@ import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
 import mb.demo.applications.ai.agents.controllers.TestSpecRestController;
-import mb.demo.applications.ai.agents.service.TestSpecService;
+import mb.demo.applications.ai.agents.services.TestSpecService;
 import mb.demo.applications.ai.agents.utils.FileUtils;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 import org.assertj.core.api.Assertions;

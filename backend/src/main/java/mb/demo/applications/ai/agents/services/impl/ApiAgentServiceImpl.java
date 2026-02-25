@@ -1,4 +1,4 @@
-package mb.demo.applications.ai.agents.service.impl;
+package mb.demo.applications.ai.agents.services.impl;
 
 import com.google.adk.agents.LlmAgent;
 import com.google.adk.agents.RunConfig;
@@ -7,7 +7,7 @@ import com.google.adk.runner.InMemoryRunner;
 import com.google.adk.sessions.Session;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
-import mb.demo.applications.ai.agents.service.ApiAgentService;
+import mb.demo.applications.ai.agents.services.ApiAgentService;
 import org.springframework.stereotype.Service;
 
 @Service

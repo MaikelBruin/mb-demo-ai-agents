@@ -1,4 +1,4 @@
-package mb.demo.applications.ai.agents.service;
+package mb.demo.applications.ai.agents.services;
 
 public interface ApiAgentService {
 
