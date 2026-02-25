@@ -1,5 +1,6 @@
 package mb.demo.applications.ai.agents.base.cucumber.steps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -69,12 +70,13 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         File input = FileUtils.getFileFromResources("input-specs/" + fileName);
         List<TestResult> response = testSpecService.testPublicSpec(new MockMultipartFile("spec.yaml", input.getName(), MediaType.APPLICATION_YAML_VALUE, Files.readAllBytes(input.toPath())));
         testDataHolder.setTestResults(response);
-        log.info("test results: {}", objectMapper.writeValueAsString(response));
     }
 
     @Then("there should be test results")
-    public void thereShouldBeTestResults() {
-        Assertions.assertThat(testDataHolder.getTestResults()).isNotNull();
-        Assertions.assertThat(testDataHolder.getTestResults()).isNotEmpty();
+    public void thereShouldBeTestResults() throws JsonProcessingException {
+        List<TestResult> actualResults = testDataHolder.getTestResults();
+        log.info("test results: {}", objectMapper.writeValueAsString(actualResults));
+        Assertions.assertThat(actualResults).isNotNull();
+        Assertions.assertThat(actualResults).isNotEmpty();
     }
 }

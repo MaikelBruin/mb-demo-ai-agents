@@ -4,6 +4,11 @@ Feature: AI Agents integrated tests
     Given I test the openapi spec "petstore.yaml" with help of my agent
     Then there should be test results
 
-#  Scenario: Single endpoint should return something
-#    When I call the only endpoint of this service
-#    Then the response should not be null
+  Scenario: Test openapi spec without payloads
+    Given I test the openapi spec "petstore-no-payloads.yaml" with help of my agent
+    Then there should be test results
+
+  Scenario: Test soccer api without payloads
+    Given I test the openapi spec "soccer-no-payloads.json" with help of my agent
+    Then there should be test results
+

@@ -136,8 +136,16 @@ public class TestSpecServiceImpl implements TestSpecService {
         }
         //TODO: insert valid examples for types
         if (exampleValue == null) {
-            exampleValue = "someValue";
+            exampleValue = switch (parameter.getSchema().getType().toUpperCase()) {
+                case "STRING" -> "someValue";
+                case "NUMBER", "INTEGER" -> 1;
+                case "BOOLEAN" -> true;
+                case "OBJECT" -> new Object();
+                default -> exampleValue;
+            };
         }
+
+        if (exampleValue == null) throw new RuntimeException("Could not find example value for parameter: " + parameter.getName());
         return exampleValue;
     }
 
