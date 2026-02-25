@@ -3,6 +3,7 @@ package mb.demo.applications.ai.agents.service.impl;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.models.ApiCall;
 import mb.demo.applications.ai.agents.models.ApiCallResponse;
@@ -38,7 +39,7 @@ public class TestSpecServiceImpl implements TestSpecService {
     }
 
     @Override
-    public List<TestResult> testPublicSpec(MultipartFile file) throws IOException {
+    public List<TestResult> testPublicSpec(MultipartFile file, @Nullable String token) throws IOException {
         String specContent = new String(file.getBytes(), StandardCharsets.UTF_8);
         // 1. Parse Spec
         OpenAPI openAPI = new OpenAPIV3Parser().readContents(specContent).getOpenAPI();
@@ -68,7 +69,7 @@ public class TestSpecServiceImpl implements TestSpecService {
                     //replace query params
                     url = addRequiredQueryParameters(parameters, url);
 
-                    ApiCallResponse response = executeCall(new ApiCall(url, method, payload));
+                    ApiCallResponse response = executeCall(new ApiCall(url, method, payload), token);
                     return new TestResult()
                             .url(url)
                             .method(method)
@@ -134,7 +135,8 @@ public class TestSpecServiceImpl implements TestSpecService {
                 else exampleValue = "[123]";
             }
         }
-        //TODO: insert valid examples for types
+
+        //set default value if no examples are listed in spec
         if (exampleValue == null) {
             exampleValue = switch (parameter.getSchema().getType().toUpperCase()) {
                 case "STRING" -> "someValue";
@@ -145,31 +147,32 @@ public class TestSpecServiceImpl implements TestSpecService {
             };
         }
 
-        if (exampleValue == null) throw new RuntimeException("Could not find example value for parameter: " + parameter.getName());
+        if (exampleValue == null)
+            throw new RuntimeException("Could not find example value for parameter: " + parameter.getName());
         return exampleValue;
     }
 
-    private ApiCallResponse executeCall(ApiCall call) {
+    private ApiCallResponse executeCall(ApiCall call, @Nullable String token) {
         try {
             String methodString = call.method().toUpperCase();
             HttpMethod method = HttpMethod.valueOf(methodString);
-            ResponseEntity<String> response = switch (methodString) {
-                case "GET", "DELETE" -> restClient.method(method)
-                        .uri(call.url())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .onStatus(new DefaultResponseErrorHandler())
-                        .toEntity(String.class);
-                case "POST", "PUT", "PATCH" -> restClient.method(method)
-                        .uri(call.url())
+            RestClient.RequestBodySpec requestBodySpec = restClient.method(method)
+                    .uri(call.url())
+                    .accept(MediaType.APPLICATION_JSON);
+            switch (methodString) {
+                case "POST", "PUT", "PATCH" -> requestBodySpec = requestBodySpec
                         .body(call.payload())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .onStatus(new DefaultResponseErrorHandler())
-                        .toEntity(String.class);
-                default -> throw new IllegalArgumentException("Unsupported HTTP method: " + method);
-            };
+                        .contentType(MediaType.APPLICATION_JSON);
+            }
+
+            if (token != null) {
+                requestBodySpec = requestBodySpec.header("Authorization", token);
+            }
+
+            ResponseEntity<String> response = requestBodySpec
+                    .retrieve()
+                    .onStatus(new DefaultResponseErrorHandler())
+                    .toEntity(String.class);
             return new ApiCallResponse(call.url(), response.getStatusCode().value(), response.getBody());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             return new ApiCallResponse(call.url(), e.getStatusCode().value(), e.getResponseBodyAsString());

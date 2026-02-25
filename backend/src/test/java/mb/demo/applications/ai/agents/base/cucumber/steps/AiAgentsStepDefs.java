@@ -68,7 +68,8 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
     @Given("I test the openapi spec {string} with help of my agent")
     public void iTestTheOpenapiSpecWithHelpOfMyAgent(String fileName) throws URISyntaxException, IOException {
         File input = FileUtils.getFileFromResources("input-specs/" + fileName);
-        List<TestResult> response = testSpecService.testPublicSpec(new MockMultipartFile("spec.yaml", input.getName(), MediaType.APPLICATION_YAML_VALUE, Files.readAllBytes(input.toPath())));
+        MockMultipartFile file = new MockMultipartFile("spec.yaml", input.getName(), MediaType.APPLICATION_YAML_VALUE, Files.readAllBytes(input.toPath()));
+        List<TestResult> response = testSpecService.testPublicSpec(file, null);
         testDataHolder.setTestResults(response);
     }
 
@@ -78,5 +79,14 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         log.info("test results: {}", objectMapper.writeValueAsString(actualResults));
         Assertions.assertThat(actualResults).isNotNull();
         Assertions.assertThat(actualResults).isNotEmpty();
+    }
+
+    @Given("I test the secret openapi spec {string} with help of my agent")
+    public void iTestTheSecretOpenapiSpecWithHelpOfMyAgent(String fileName) throws URISyntaxException, IOException {
+        File input = FileUtils.getFileFromResources("input-specs/secret/" + fileName);
+        MockMultipartFile file = new MockMultipartFile("spec.yaml", input.getName(), MediaType.APPLICATION_YAML_VALUE, Files.readAllBytes(input.toPath()));
+        String token = System.getenv("SECRET_API_TOKEN");
+        List<TestResult> response = testSpecService.testPublicSpec(file, token);
+        testDataHolder.setTestResults(response);
     }
 }

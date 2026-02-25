@@ -12,3 +12,6 @@ Feature: AI Agents integrated tests
     Given I test the openapi spec "soccer-no-payloads.json" with help of my agent
     Then there should be test results
 
+  Scenario: Test secret api with token
+    Given I test the secret openapi spec "test-01.yaml" with help of my agent
+    Then there should be test results

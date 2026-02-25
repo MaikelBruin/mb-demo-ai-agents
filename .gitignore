@@ -26,3 +26,4 @@ replay_pid*
 # target folders
 api/target
 backend/target
+backend/src/test/resources/input-specs/secret

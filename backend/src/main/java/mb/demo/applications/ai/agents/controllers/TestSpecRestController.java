@@ -30,7 +30,7 @@ public class TestSpecRestController implements DefaultApi {
     ) {
         List<TestResult> response;
         try {
-            response = testSpecService.testPublicSpec(file);
+            response = testSpecService.testPublicSpec(file, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
