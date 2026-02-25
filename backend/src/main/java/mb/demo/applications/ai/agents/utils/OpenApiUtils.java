@@ -42,7 +42,7 @@ public class OpenApiUtils {
         Object exampleValue = parameter.getExample() != null
                 ? parameter.getExample()
                 : parameter.getSchema().getDefault();
-        //check for array
+        //check for defined array item examples
         if (parameter.getSchema().getItems() != null && parameter.getSchema().getItems().getType() != null) {
             Object itemExample = parameter.getSchema().getItems().getExample();
             if (itemExample != null) {

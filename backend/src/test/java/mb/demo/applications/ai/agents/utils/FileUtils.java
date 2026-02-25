@@ -1,8 +1,13 @@
 package mb.demo.applications.ai.agents.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 public class FileUtils {
@@ -24,5 +29,10 @@ public class FileUtils {
 
         // Convert the URL to a File object
         return new File(resourceUrl.toURI());
+    }
+
+    public static void writeToFile(String path, String data) throws IOException {
+        Path filePath = Paths.get(path);
+        Files.write(filePath, data.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }

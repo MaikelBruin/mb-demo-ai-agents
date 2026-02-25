@@ -2,6 +2,7 @@ package mb.demo.applications.ai.agents.base.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
 import mb.demo.applications.ai.agents.controllers.TestSpecRestController;
 import mb.demo.applications.ai.agents.services.TestSpecService;
+import mb.demo.applications.ai.agents.services.impl.ApiAgentServiceImpl;
 import mb.demo.applications.ai.agents.utils.FileUtils;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 import org.assertj.core.api.Assertions;
@@ -27,6 +29,7 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
 
     private final TestSpecRestController testSpecRestController;
     private final TestSpecService testSpecService;
+    private final ApiAgentServiceImpl agentService;
     private final ObjectMapper objectMapper;
 
     public AiAgentsStepDefs(
@@ -34,12 +37,13 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
             final ObjectMapper objectMapper,
             final TestSpecRestController testSpecRestController,
             final TestSpecService testSpecService,
-            final ObjectMapper objectMapper1
+            final ApiAgentServiceImpl agentService
     ) {
         super(testDataHolder, objectMapper);
         this.testSpecRestController = testSpecRestController;
         this.testSpecService = testSpecService;
-        this.objectMapper = objectMapper1;
+        this.objectMapper = objectMapper;
+        this.agentService = agentService;
     }
 
     @When("I call the only endpoint of this service")
@@ -88,5 +92,16 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         String token = System.getenv("SECRET_API_TOKEN");
         List<TestResult> response = testSpecService.testPublicSpec(file, token);
         testDataHolder.setTestResults(response);
+    }
+
+    @And("I create an html report")
+    public void iCreateAnHtmlReport() throws IOException {
+        File testOutputDir = new File("target" + File.separator + "test-output");
+        if (!testOutputDir.exists()) {
+            Files.createDirectories(testOutputDir.toPath());
+        }
+        String htmlString = agentService.getReport(objectMapper.writeValueAsString(testDataHolder.getTestResults()));
+        String dataFilePath = "target" + File.separator + "test-output" + File.separator + System.currentTimeMillis() + "-report.html";
+        FileUtils.writeToFile(dataFilePath, htmlString);
     }
 }
