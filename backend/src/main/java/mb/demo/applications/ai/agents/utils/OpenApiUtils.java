@@ -1,5 +1,6 @@
 package mb.demo.applications.ai.agents.utils;
 
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -44,27 +45,30 @@ public class OpenApiUtils {
         //check for array
         if (parameter.getSchema().getItems() != null && parameter.getSchema().getItems().getType() != null) {
             Object itemExample = parameter.getSchema().getItems().getExample();
-            if (itemExample == null) {
-                String type = parameter.getSchema().getItems().getType();
-                if (type.equalsIgnoreCase("string")) exampleValue = "[someString]";
-                else exampleValue = "[123]";
+            if (itemExample != null) {
+                exampleValue = List.of(itemExample);
             }
         }
 
         //set default value if no examples are listed in spec
         if (exampleValue == null) {
-            exampleValue = switch (parameter.getSchema().getType().toUpperCase()) {
-                case "STRING" -> OpenApiUtils.generateStringExample(parameter.getSchema().getFormat());
-                case "NUMBER", "INTEGER" -> 1;
-                case "BOOLEAN" -> true;
-                case "OBJECT" -> new Object();
-                default -> exampleValue;
-            };
+            exampleValue = generateExampleValue(parameter.getSchema());
         }
 
         if (exampleValue == null)
             throw new RuntimeException("Could not find example value for parameter: " + parameter.getName());
         return exampleValue;
+    }
+
+    private static Object generateExampleValue(Schema schema) {
+        return switch (schema.getType().toUpperCase()) {
+            case "STRING" -> OpenApiUtils.generateStringExample(schema.getFormat());
+            case "NUMBER", "INTEGER" -> 1;
+            case "BOOLEAN" -> true;
+            case "OBJECT" -> new Object();
+            case "ARRAY" -> List.of(generateExampleValue(schema.getItems()));
+            default -> throw new IllegalArgumentException("Unsupported type: " + schema.getType());
+        };
     }
 
     public static String replacePathParameters(List<Parameter> parameters, String url) {
