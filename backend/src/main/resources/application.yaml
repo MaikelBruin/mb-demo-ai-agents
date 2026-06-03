@@ -14,7 +14,7 @@ spring:
 
 
 springdoc:
-  show-actuator: false
+  show-actuator: true
   swagger-ui:
     path: /api
     tags-sorter: alpha

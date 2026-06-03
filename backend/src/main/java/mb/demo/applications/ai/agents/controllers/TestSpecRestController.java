@@ -2,8 +2,9 @@ package mb.demo.applications.ai.agents.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import mb.demo.applications.ai.agents.services.TestSpecService;
-import mb.demo.applications.ai.agents.webapi.api.DefaultApi;
+import mb.demo.applications.ai.agents.webapi.api.TestingApi;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-public class TestSpecRestController implements DefaultApi {
+public class TestSpecRestController implements TestingApi {
 
     private final TestSpecService testSpecService;
 
@@ -23,7 +24,7 @@ public class TestSpecRestController implements DefaultApi {
     }
 
     @Override
-    @PostMapping("/api/test/public/openapi")
+    @PostMapping(value = "/api/test/public/openapi", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<TestResult>> testPublicSpec(
             @Parameter(name = "file", required = true) @RequestPart(value = "file") MultipartFile file
     ) {

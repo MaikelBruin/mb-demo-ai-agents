@@ -9,6 +9,8 @@ servers:
 paths:
   /api/test/public/openapi:
     post:
+      tags:
+        - testing
       summary: Upload an OpenAPI spec to start testing
       operationId: testPublicSpec
       requestBody:
