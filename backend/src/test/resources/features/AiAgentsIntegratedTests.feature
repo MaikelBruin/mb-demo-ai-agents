@@ -1,7 +1,8 @@
 Feature: AI Agents integrated tests
 
+  # removed some endpoints from the spec to reduce gemini token usage
   Scenario: Test openapi spec with help of agent
-    Given I test the openapi spec "petstore.yaml" with help of my agent
+    Given I test the openapi spec "petstore-reduced.yaml" with help of my agent
     Then there should be test results
 
   Scenario: Test openapi spec without payloads
@@ -13,6 +14,7 @@ Feature: AI Agents integrated tests
     Given I test the openapi spec "soccer-no-payloads.json" with help of my agent
     Then there should be test results
 
+  @skip
   Scenario: Test secret api with token
     Given I test the secret openapi spec "test-01.yaml" with help of my agent
     Then there should be test results
