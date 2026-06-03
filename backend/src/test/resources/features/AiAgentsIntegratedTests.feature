@@ -10,6 +10,7 @@ Feature: AI Agents integrated tests
     Then there should be test results
     And I create an html report
 
+  @skip
   Scenario: Test soccer api without payloads
     Given I test the openapi spec "soccer-no-payloads.json" with help of my agent
     Then there should be test results

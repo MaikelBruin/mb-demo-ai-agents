@@ -51,7 +51,7 @@ public class TestSpecServiceImpl implements TestSpecService {
                         //Ask Agent for a valid payload based on the operation's schema
                         String prompt = String.format("Generate one valid JSON object for %s %s. Spec: %s",
                                 method, path, opEntry.getValue().getRequestBody());
-                        log.debug("prompting agent: '{}'", prompt);
+                        log.info("prompting agent: '{}'", prompt);
                         payload = apiAgentService.getPayload(prompt);
                         log.info("retrieved payload: '{}'", payload);
                     }
