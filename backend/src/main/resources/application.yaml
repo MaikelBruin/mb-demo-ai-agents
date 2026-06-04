@@ -12,6 +12,10 @@ spring:
       genai:
         api-key: ${GOOGLE_API_KEY}
 
+mb-demo-ai-agents:
+  github:
+    user: MaikelBruin
+    token: ${GITHUB_ACCESS_TOKEN}
 
 springdoc:
   show-actuator: true

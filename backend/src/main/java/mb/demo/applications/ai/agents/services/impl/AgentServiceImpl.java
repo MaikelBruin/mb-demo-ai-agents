@@ -7,22 +7,25 @@ import com.google.adk.runner.InMemoryRunner;
 import com.google.adk.sessions.Session;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
-import mb.demo.applications.ai.agents.services.ApiAgentService;
+import mb.demo.applications.ai.agents.services.AgentService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiAgentServiceImpl implements ApiAgentService {
+public class AgentServiceImpl implements AgentService {
 
     private final LlmAgent payloadGeneratorAgent;
     private final LlmAgent reportGeneratorAgent;
+    private final LlmAgent codeReviewerAgent;
 
-    public ApiAgentServiceImpl(
+    public AgentServiceImpl(
             @Qualifier("payloadGeneratorAgent") final LlmAgent payloadGeneratorAgent,
-            @Qualifier("reportGeneratorAgent") final LlmAgent reportGeneratorAgent
+            @Qualifier("reportGeneratorAgent") final LlmAgent reportGeneratorAgent,
+            @Qualifier("codeReviewerAgent") final LlmAgent codeReviewerAgent
     ) {
         this.payloadGeneratorAgent = payloadGeneratorAgent;
         this.reportGeneratorAgent = reportGeneratorAgent;
+        this.codeReviewerAgent = codeReviewerAgent;
     }
 
     public String getPayload(String operationSchema) {
@@ -56,6 +59,20 @@ public class ApiAgentServiceImpl implements ApiAgentService {
         Content content = Content.fromParts(Part.fromText(testResults));
         Event response = runner.runAsync(session.userId(), session.id(), content, runConfig)
                 .blockingFirst();
+        return response.stringifyContent();
+    }
+
+    public String doCodeReview(String prompt) {
+        // Create a new runner for each request to ensure a clean state.
+        RunConfig runConfig = RunConfig.builder().build();
+        InMemoryRunner runner = new InMemoryRunner(codeReviewerAgent);
+
+        Session session = runner.sessionService()
+                                .createSession(runner.appName(), "user-123")
+                                .blockingGet();
+        Content content = Content.fromParts(Part.fromText(prompt));
+        Event response = runner.runAsync(session.userId(), session.id(), content, runConfig)
+                               .blockingFirst();
         return response.stringifyContent();
     }
 }
