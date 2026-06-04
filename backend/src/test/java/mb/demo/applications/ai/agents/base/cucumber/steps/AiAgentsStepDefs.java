@@ -2,6 +2,7 @@ package mb.demo.applications.ai.agents.base.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -9,9 +10,12 @@ import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.base.cucumber.TestDataHolder;
 import mb.demo.applications.ai.agents.controllers.TestSpecRestController;
+import mb.demo.applications.ai.agents.services.ReviewService;
 import mb.demo.applications.ai.agents.services.TestSpecService;
-import mb.demo.applications.ai.agents.services.impl.ApiAgentServiceImpl;
+import mb.demo.applications.ai.agents.services.impl.AgentServiceImpl;
 import mb.demo.applications.ai.agents.utils.FileUtils;
+import mb.demo.applications.ai.agents.webapi.model.ReviewComment;
+import mb.demo.applications.ai.agents.webapi.model.ReviewGitHubPrRequest;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.MediaType;
@@ -28,8 +32,13 @@ import java.util.List;
 public class AiAgentsStepDefs extends BaseCucumberStepDefs {
 
     private final TestSpecRestController testSpecRestController;
+
     private final TestSpecService testSpecService;
-    private final ApiAgentServiceImpl agentService;
+
+    private final ReviewService reviewService;
+
+    private final AgentServiceImpl agentService;
+
     private final ObjectMapper objectMapper;
 
     public AiAgentsStepDefs(
@@ -37,12 +46,14 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
             final ObjectMapper objectMapper,
             final TestSpecRestController testSpecRestController,
             final TestSpecService testSpecService,
-            final ApiAgentServiceImpl agentService
+            final ReviewService reviewService,
+            final AgentServiceImpl agentService
     ) {
         super(testDataHolder, objectMapper);
         this.testSpecRestController = testSpecRestController;
         this.testSpecService = testSpecService;
         this.objectMapper = objectMapper;
+        this.reviewService = reviewService;
         this.agentService = agentService;
     }
 
@@ -53,13 +64,13 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         restTestClient = RestTestClient.bindToServer().baseUrl("http://localhost:8080").build();
         restTestClient = RestTestClient.bindToController(testSpecRestController).build();
         List response = restTestClient.post()
-                .uri(fullUri)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(input)
-                .exchange()
-                .returnResult(List.class)
-                .getResponseBody();
+                                      .uri(fullUri)
+                                      .accept(MediaType.APPLICATION_JSON)
+                                      .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                      .body(input)
+                                      .exchange()
+                                      .returnResult(List.class)
+                                      .getResponseBody();
 
         testDataHolder.setTestResults(response);
     }
@@ -104,4 +115,20 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         String dataFilePath = "target" + File.separator + "test-output" + File.separator + System.currentTimeMillis() + "-report.html";
         FileUtils.writeToFile(dataFilePath, htmlString);
     }
+
+    @Given("I review a github pull request")
+    public void iReviewAGithubPullRequest() {
+        ReviewGitHubPrRequest reviewGitHubPrRequest = new ReviewGitHubPrRequest()
+                                                              .pullRequestNumber(11)
+                                                              .repository("mb-testframeworks-java")
+                                                              .userName("MaikelBruin");
+        List<ReviewComment> result = reviewService.reviewGithubPullRequest(reviewGitHubPrRequest);
+        testDataHolder.setReviewComments(result);
+    }
+
+    @Then("there should be review comments")
+    public void thereShouldBeReviewComments() {
+        Assertions.assertThat(testDataHolder.getReviewComments()).isNotEmpty();
+    }
+
 }

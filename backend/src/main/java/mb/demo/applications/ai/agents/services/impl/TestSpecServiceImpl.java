@@ -7,7 +7,7 @@ import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import mb.demo.applications.ai.agents.models.ApiCall;
 import mb.demo.applications.ai.agents.models.ApiCallResponse;
-import mb.demo.applications.ai.agents.services.ApiAgentService;
+import mb.demo.applications.ai.agents.services.AgentService;
 import mb.demo.applications.ai.agents.services.ApiCallService;
 import mb.demo.applications.ai.agents.services.TestSpecService;
 import mb.demo.applications.ai.agents.utils.OpenApiUtils;
@@ -23,15 +23,15 @@ import java.util.List;
 @Service
 public class TestSpecServiceImpl implements TestSpecService {
 
-    private final ApiAgentService apiAgentService;
+    private final AgentService agentService;
     private final ApiCallService apiCallService;
 
 
     public TestSpecServiceImpl(
-            final ApiAgentService apiAgentService,
+            final AgentService agentService,
             final ApiCallService apiCallService
     ) {
-        this.apiAgentService = apiAgentService;
+        this.agentService = agentService;
         this.apiCallService = apiCallService;
     }
 
@@ -52,7 +52,7 @@ public class TestSpecServiceImpl implements TestSpecService {
                         String prompt = String.format("Generate one valid JSON object for %s %s. Spec: %s",
                                 method, path, opEntry.getValue().getRequestBody());
                         log.info("prompting agent: '{}'", prompt);
-                        payload = apiAgentService.getPayload(prompt);
+                        payload = agentService.getPayload(prompt);
                         log.info("retrieved payload: '{}'", payload);
                     }
 

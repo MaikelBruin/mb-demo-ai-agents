@@ -3,6 +3,7 @@ package mb.demo.applications.ai.agents.base.cucumber;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mb.demo.applications.ai.agents.webapi.model.ReviewComment;
 import mb.demo.applications.ai.agents.webapi.model.TestResult;
 
 import java.util.List;
@@ -13,5 +14,6 @@ import java.util.List;
 public class TestDataHolder {
 
     private List<TestResult> testResults;
+    private List<ReviewComment> reviewComments;
     private Exception exception;
 }

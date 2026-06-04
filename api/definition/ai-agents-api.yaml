@@ -33,8 +33,47 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TestResult'
+  /api/review/public/github/pr:
+    post:
+      tags:
+        - reviewing
+      summary: Reviews a public github PR
+      operationId: reviewGitHubPr
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: the name of the github user
+                repository:
+                  type: string
+                  description: the name of the github repository
+                pullRequestNumber:
+                  type: integer
+                  format: int32
+                  description: The github pull request number
+      responses:
+        '200':
+          description: Review done successfully
+          content:
+            application/json:
+              schema:
+                type:
+                items:
+                  $ref: '#/components/schemas/ReviewComment'
 components:
   schemas:
+    ReviewComment:
+      type: object
+      properties:
+        comment:
+          type: string
+        priority:
+          type: string
     TestResult:
       type: object
       properties:
