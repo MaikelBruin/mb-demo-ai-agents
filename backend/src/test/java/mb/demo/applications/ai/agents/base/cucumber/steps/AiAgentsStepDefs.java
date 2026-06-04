@@ -57,29 +57,6 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
         this.agentService = agentService;
     }
 
-    @When("I call the only endpoint of this service")
-    public void iCallTheOnlyEndpointOfThisService() throws URISyntaxException {
-        String fullUri = "/api/test/public/openapi";
-        File input = FileUtils.getFileFromResources("input-specs/petstore.yaml");
-        restTestClient = RestTestClient.bindToServer().baseUrl("http://localhost:8080").build();
-        restTestClient = RestTestClient.bindToController(testSpecRestController).build();
-        List response = restTestClient.post()
-                                      .uri(fullUri)
-                                      .accept(MediaType.APPLICATION_JSON)
-                                      .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                                      .body(input)
-                                      .exchange()
-                                      .returnResult(List.class)
-                                      .getResponseBody();
-
-        testDataHolder.setTestResults(response);
-    }
-
-    @Then("the response should not be null")
-    public void theResponseShouldNotBeNull() {
-        Assertions.assertThat(testDataHolder.getTestResults()).isNotNull();
-    }
-
     @Given("I test the openapi spec {string} with help of my agent")
     public void iTestTheOpenapiSpecWithHelpOfMyAgent(String fileName) throws URISyntaxException, IOException {
         File input = FileUtils.getFileFromResources("input-specs/" + fileName);
