@@ -70,6 +70,11 @@ components:
     ReviewComment:
       type: object
       properties:
+        fileName:
+          type: string
+        lineNumber:
+          type: integer
+          format: int32
         comment:
           type: string
         priority:

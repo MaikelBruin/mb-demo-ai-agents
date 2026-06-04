@@ -52,9 +52,25 @@ public class AgentsConfiguration {
                        .description("An agent specialized in reviewing code using github pull requests.")
                        .model("gemini-2.5-flash")
                        .instruction("""
-                                    "Review the incoming GitHub pull request diff for code quality,
+                                    Review the incoming GitHub pull request diff for code quality,
                                     adherence to automation patterns (e.g., Page Object Model), security vulnerabilities, hardcoded secrets, and test coverage gaps.
-                                    Post constructive line-by-line comments on the PR."
+                                    Return comments on the PR by providing a JSON array with the results.
+                                    
+                                    RULES:
+                                    1. Output ONLY the raw JSON Array string.
+                                    2. Do not include markdown formatting like ```json ... ```.
+                                    3. Ensure all elements include the properties:
+                                                fileName:
+                                                  type: string
+                                                lineNumber:
+                                                  type: integer
+                                                  format: int32
+                                                comment:
+                                                  type: string
+                                                priority:
+                                                  type: string
+                                    .
+                                    4. If you are unable to fetch the data from the URL, return a list with a single element in which you explain this.
                                     """)
                        .build();
     }

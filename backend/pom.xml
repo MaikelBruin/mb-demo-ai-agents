@@ -207,6 +207,13 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.1</version>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.kohsuke/github-api -->
+        <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>github-api</artifactId>
+            <version>1.330</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
