@@ -14,6 +14,6 @@ import java.util.List;
 public class TestDataHolder {
 
     private List<TestResult> testResults;
-    private List<ReviewComment> reviewComments;
+    private String reviewComments;
     private Exception exception;
 }

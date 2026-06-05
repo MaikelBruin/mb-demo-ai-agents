@@ -99,7 +99,7 @@ public class AiAgentsStepDefs extends BaseCucumberStepDefs {
                                                               .pullRequestNumber(11)
                                                               .repository("mb-testframeworks-java")
                                                               .userName("MaikelBruin");
-        List<ReviewComment> result = reviewService.reviewGithubPullRequest(reviewGitHubPrRequest);
+        String result = reviewService.reviewGithubPullRequest(reviewGitHubPrRequest);
         testDataHolder.setReviewComments(result);
     }
 

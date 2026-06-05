@@ -60,11 +60,9 @@ paths:
         '200':
           description: Review done successfully
           content:
-            application/json:
+            text/plain:
               schema:
-                type:
-                items:
-                  $ref: '#/components/schemas/ReviewComment'
+                type: string
 components:
   schemas:
     ReviewComment:

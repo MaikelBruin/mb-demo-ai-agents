@@ -1,6 +1,7 @@
 package mb.demo.applications.ai.agents.config;
 
 import lombok.extern.slf4j.Slf4j;
+import mb.demo.applications.ai.agents.tools.GitHubTools;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ public class GitHubClientConfiguration {
     @Bean
     public GitHub gitHub() throws IOException {
         GitHub gitHub = new GitHubBuilder().withOAuthToken(gitHubToken).build();
+        GitHubTools.setGithubClient(gitHub);
         log.info("logged into github as {}", gitHub.getMyself().getLogin());
         return gitHub;
     }

@@ -1,6 +1,8 @@
 package mb.demo.applications.ai.agents.config;
 
 import com.google.adk.agents.LlmAgent;
+import com.google.adk.tools.FunctionTool;
+import mb.demo.applications.ai.agents.tools.GitHubTools;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,7 +56,8 @@ public class AgentsConfiguration {
                        .instruction("""
                                     Review the incoming GitHub pull request diff for code quality,
                                     adherence to automation patterns (e.g., Page Object Model), security vulnerabilities, hardcoded secrets, and test coverage gaps.
-                                    Return comments on the PR by providing a JSON array with the results.
+                                    Aside from providing the output in the json response, post all review comments in the PR using the "postReviewCommentTool" tool provided.
+                                    When using the "postReviewCommentTool", make sure that the body is a single string that can be passed in an api call.
                                     
                                     RULES:
                                     1. Output ONLY the raw JSON Array string.
@@ -71,7 +74,9 @@ public class AgentsConfiguration {
                                                   type: string
                                     .
                                     4. If you are unable to fetch the data from the URL, return a list with a single element in which you explain this.
+                                    5. Post all review comments using the provided tool "postReviewCommentTool".
                                     """)
+                       .tools(FunctionTool.create(GitHubTools.class, "postReviewCommentTool"))
                        .build();
     }
 

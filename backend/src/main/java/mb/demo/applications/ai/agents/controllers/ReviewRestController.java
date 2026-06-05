@@ -21,8 +21,8 @@ public class ReviewRestController implements ReviewingApi {
 
     @Override
     @PostMapping(value = "/api/review/public/github/pr")
-    public ResponseEntity<List<ReviewComment>> reviewGitHubPr(ReviewGitHubPrRequest reviewGitHubPrRequest) {
-        List<ReviewComment> response;
+    public ResponseEntity<String> reviewGitHubPr(ReviewGitHubPrRequest reviewGitHubPrRequest) {
+        String response;
         try {
             response = reviewService.reviewGithubPullRequest(reviewGitHubPrRequest);
         } catch (Exception e) {
