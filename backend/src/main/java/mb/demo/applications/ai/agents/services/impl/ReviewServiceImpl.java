@@ -55,11 +55,32 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("retrieved result: '{}'", agentResult);
         List<ReviewComment> result;
         try {
-            result = objectMapper.readValue(agentResult, new TypeReference<>() {});
+            result = objectMapper.readValue(agentResult, new TypeReference<>() {
+            });
+            postComments(result, pr);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    public void postComments(List<ReviewComment> reviewComments, GHPullRequest pr) {
+        for (var comment : reviewComments) {
+            postComment(comment, pr);
+        }
+    }
+
+    public void postComment(ReviewComment comment, GHPullRequest pr) {
+        try {
+            pr.createReviewComment()
+                    .body(comment.getComment())
+                    .path(comment.getFileName())
+                    .line(comment.getLineNumber())
+                    .commitId(pr.getHead().getSha())
+                    .create();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String buildAiPrompt(GHPullRequest pr) throws IOException {
@@ -76,7 +97,7 @@ public class ReviewServiceImpl implements ReviewService {
         for (GHPullRequestFileDetail file : pr.listFiles()) {
             codeDiffs.append("File: ").append(file.getFilename()).append("\n");
             codeDiffs.append("Status: ").append(file.getStatus()).append("\n");
-            codeDiffs.append("Changes:\n").append(file.getPatch()).append("\n");
+            codeDiffs.append("Changes:\n").append(annotatePatchWithLineNumbers(file.getPatch())).append("\n");
             codeDiffs.append("---\n");
         }
 
@@ -84,40 +105,70 @@ public class ReviewServiceImpl implements ReviewService {
         return constructPromptText(title, description, author, branchFrom, branchTo, changedFilesCount, codeDiffs.toString());
     }
 
+    private String annotatePatchWithLineNumbers(String patch) {
+        if (patch == null || patch.isBlank()) return "";
+        StringBuilder annotated = new StringBuilder();
+        int newLine = 0;
+
+        for (String line : patch.split("\n")) {
+            if (line.startsWith("@@")) {
+                annotated.append(line).append("\n");
+                try {
+                    // Extract the starting line number for the new file (from @@ -x,y +startLine,count @@)
+                    int plusIdx = line.indexOf('+');
+                    int commaIdx = line.indexOf(',', plusIdx);
+                    int spaceIdx = line.indexOf(' ', plusIdx);
+                    int endIdx = (commaIdx != -1 && commaIdx < spaceIdx) ? commaIdx : spaceIdx;
+                    newLine = Integer.parseInt(line.substring(plusIdx + 1, endIdx));
+                } catch (Exception e) {
+                    log.warn("Failed to parse hunk header: {}", line);
+                }
+            } else if (line.startsWith("-")) {
+                annotated.append(line).append("\n"); // Deletions remain untouched
+            } else if (line.startsWith("+")) {
+                annotated.append(String.format("+ [Line %d] %s\n", newLine++, line.substring(1)));
+            } else if (line.startsWith(" ")) {
+                annotated.append(String.format("  [Line %d] %s\n", newLine++, line.substring(1)));
+            } else {
+                annotated.append(line).append("\n");
+            }
+        }
+        return annotated.toString();
+    }
+
     private String constructPromptText(String title, String desc, String author, String from, String to, int fileCount, String diffs) {
         // String template block (Java 15+)
         return """
-        You are an expert Senior Software Engineer and Code Reviewer. Your task is to perform a thorough review of the following GitHub Pull Request.
-        
-        ### PULL REQUEST METADATA
-        - **Title:** %s
-        - **Author:** %s
-        - **Target Branch:** %s (merging into)
-        - **Source Branch:** %s (merging from)
-        - **Number of Files Changed:** %d
-        
-        ### DESCRIPTION / CONTEXT
-        %s
-        
-        ### CODE DIFF
-        The code changes are provided below in standard Git diff format. Lines starting with '+' are additions, and lines starting with '-' are deletions.
-        
-        ```diff
-        %s
-        ```
-        
-        ### YOUR INSTRUCTIONS
-        Please review the changes above and provide your feedback structured exactly as follows:
-        1. **Summary:** A 2-3 sentence overview of what this PR accomplishes.
-        2. **Critical Issues:** Any bugs, security vulnerabilities, race conditions, or logical errors.
-        3. **Refactoring & Clean Code:** Suggestions for readability, optimization, edge cases, or adherence to best practices.
-        4. **Praise:** Point out any exceptionally well-written code or clever implementations.
-        
-        Be constructive, concise, and precise. If pointing out an issue, explain *why* it's an issue and provide a brief code snippet demonstrating how to fix it.
-        Do not include markdown formatting like ```json ... ```.
-        """.formatted(title, author, to, from, fileCount, desc, diffs);
+                You are an expert Senior Software Engineer and Code Reviewer. Your task is to perform a thorough review of the following GitHub Pull Request.
+                
+                ### PULL REQUEST METADATA
+                - **Title:** %s
+                - **Author:** %s
+                - **Target Branch:** %s (merging into)
+                - **Source Branch:** %s (merging from)
+                - **Number of Files Changed:** %d
+                
+                ### DESCRIPTION / CONTEXT
+                %s
+                
+                ### CODE DIFF
+                The code changes are provided below in standard Git diff format. Lines starting with '+' are additions, and lines starting with '-' are deletions.
+                The additions and context lines have been annotated with their absolute line numbers like [Line X].
+                
+                ```diff
+                %s
+                ```
+                
+                ### YOUR INSTRUCTIONS
+                Please review the changes above. You must return a STRICT JSON array of objects representing your review comments.
+                Each object must have exactly the following structure:
+                - "fileName": the exact name of the file
+                - "lineNumber": the exact integer line number from the [Line X] annotations where the comment applies
+                - "comment": your detailed review feedback (incorporating critical issues, refactoring suggestions, or praise)
+                
+                Do not include markdown formatting like ```json ... ```. Only return the raw JSON array.
+                """.formatted(title, author, to, from, fileCount, desc, diffs);
     }
-
 
 
 }
