@@ -33,6 +33,27 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TestResult'
+  /api/report/html:
+    post:
+      tags:
+        - reporting
+      summary: Upload test result to create an HTML report
+      operationId: generateHtmlReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TestResult'
+      responses:
+        '200':
+          description: Generated html report
+          content:
+            text/html:
+              schema:
+                type: string
   /api/review/public/github/pr:
     post:
       tags:
@@ -62,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                type:
+                type: array
                 items:
                   $ref: '#/components/schemas/ReviewComment'
 components:
